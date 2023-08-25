@@ -9,7 +9,7 @@ That is, for example, we created an object, after creation we write how to relea
 
 The mechanism works on the basis of interfaces.
 
-Using
+## Using
 
 Object
 ```pascal
@@ -53,7 +53,7 @@ initialization
   ReportMemoryLeaksOnShutdown := True;
 ```
 
-Methods
+Method
 ```pascal
 procedure TForm5.Button4Click(Sender: TObject);
 begin
@@ -63,7 +63,7 @@ begin
 end;
 ```
 
-Mem
+Memory
 ```pascal
  var p: Pointer;
  GetMem(p, 1024);  //allocate mem
