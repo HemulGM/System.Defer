@@ -7,7 +7,9 @@ The essence of the mechanism is that after some action, create a canceling actio
 
 That is, for example, we created an object, after creation we write how to release it and it will be released automatically after exiting the block.
 
-The mechanism works on the basis of interfaces.
+The mechanism works on the basis of interfaces. 
+
+> Throwing an exception in a block does not prevent the release of the object.
 
 ## Using
 
@@ -51,6 +53,18 @@ end;
 
 initialization
   ReportMemoryLeaksOnShutdown := True;
+```
+
+```pascal
+ for var i := 1 to 4 do
+ begin
+   var Test := TTestList.Create;
+   defer(Test.Free);
+
+   Test.Add('1');
+   Test.Add('2');
+   Test.Add('3');
+ end;  //free of Test each iteration
 ```
 
 Method
