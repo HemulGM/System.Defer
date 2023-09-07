@@ -8,11 +8,31 @@ object Form5: TForm5
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   DesignerMasterStyle = 0
-  object Button1: TButton
+  object ButtonDefer: TButton
     Position.X = 16.000000000000000000
     Position.Y = 24.000000000000000000
+    TabOrder = 0
+    Text = 'Defer'
+  end
+  object Button2: TButton
+    Position.X = 104.000000000000000000
+    Position.Y = 24.000000000000000000
     TabOrder = 1
-    Text = 'Button1'
-    OnClick = Button1Click
+    Text = 'Defer action'
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Position.X = 192.000000000000000000
+    Position.Y = 24.000000000000000000
+    TabOrder = 2
+    Text = 'Defer mem'
+    OnClick = Button3Click
+  end
+  object Button5: TButton
+    Position.X = 280.000000000000000000
+    Position.Y = 24.000000000000000000
+    TabOrder = 4
+    Text = 'ErrDefer'
+    OnClick = Button5Click
   end
 end

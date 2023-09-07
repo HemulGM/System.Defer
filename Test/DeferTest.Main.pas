@@ -9,8 +9,14 @@ uses
 
 type
   TForm5 = class(TForm)
-    Button1: TButton;
+    ButtonDefer: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button5: TButton;
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -29,16 +35,27 @@ implementation
 
 {$R *.fmx}
 
+function GetList: TTestList;
+begin
+  var List := TTestList.Create;
+  errdefer(List.Free);
+  List.DoRaise;
+  Result := List;
+end;
+
 procedure TForm5.Button1Click(Sender: TObject);
 begin
-  var Test := TTestList.Create;
-  defer(Test.Free);
+  for var i := 1 to 4 do
+  begin
+    var Test := TTestList.Create;
+    defer(Test.Free);
 
-  Test.Add('1');
-  Test.Add('2');
-  Test.Add('3');
-  Test.DoRaise;
-  Test.Add('4');
+    Test.Add('1');
+    Test.Add('2');
+    Test.Add('3');
+  end;
+  //Test.DoRaise;
+  //Test.Add('4');
 end;
 
 { TTestList }
@@ -52,6 +69,35 @@ end;
 procedure TTestList.DoRaise;
 begin
   raise Exception.Create('Error Message');
+end;
+
+procedure TForm5.Button2Click(Sender: TObject);
+begin
+  Canvas.BeginScene;
+  defer(Canvas.EndScene);
+
+  with Canvas do
+  begin
+    FillRect(TRectF.Empty, 1);
+  end;
+end;
+
+procedure TForm5.Button3Click(Sender: TObject);
+begin
+  var p: Pointer;
+  GetMem(p, 1024);
+  defer(
+    procedure
+    begin
+      FreeMem(p)
+    end);
+  // work with p
+end;
+
+procedure TForm5.Button5Click(Sender: TObject);
+begin
+  var List := GetList;
+  List.Free;
 end;
 
 initialization

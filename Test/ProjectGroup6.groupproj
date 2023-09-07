@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{4A808A2E-1A6D-46F5-8A9F-DFBF3D328D06}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="DeferTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DeferTestConsole.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="DeferTest">
+        <MSBuild Projects="DeferTest.dproj"/>
+    </Target>
+    <Target Name="DeferTest:Clean">
+        <MSBuild Projects="DeferTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DeferTest:Make">
+        <MSBuild Projects="DeferTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DeferTestConsole">
+        <MSBuild Projects="DeferTestConsole.dproj"/>
+    </Target>
+    <Target Name="DeferTestConsole:Clean">
+        <MSBuild Projects="DeferTestConsole.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DeferTestConsole:Make">
+        <MSBuild Projects="DeferTestConsole.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="DeferTest;DeferTestConsole"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="DeferTest:Clean;DeferTestConsole:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="DeferTest:Make;DeferTestConsole:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
