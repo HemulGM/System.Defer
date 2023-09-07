@@ -11,6 +11,10 @@ The mechanism works on the basis of interfaces.
 
 > Throwing an exception in a block does not prevent the release of the object.
 
+## Description
+`defer` is used to execute a statement while exiting the current block.
+`errdefer` works like `defer`, but only executing when the function is returned from with an error inside of the errdefer’s block.
+
 ## Using
 
 Object
@@ -83,4 +87,21 @@ Memory
  GetMem(p, 1024);  //allocate mem
  defer(procedure begin FreeMem(p) end);  //defer action for free mem
  // work with p 
+```
+
+Errdefer
+```pascal
+function GetList: TTestList;
+begin
+  var List := TTestList.Create;
+  errdefer(List.Free);
+  List.DoRaise;
+  Result := List;
+end;
+
+procedure TForm5.Button5Click(Sender: TObject);
+begin
+  var List := GetList; //exception, and no leaks
+  List.Free;
+end;
 ```
