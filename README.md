@@ -29,7 +29,7 @@ type
 procedure TForm5.Button1Click(Sender: TObject);
 begin
   var Test := TTestList.Create;
-  defer(Test.Free);  //defer action
+  defer(Test);  //defer action
 
   Test.Add('1');
   Test.Add('2');
@@ -59,7 +59,7 @@ initialization
  for var i := 1 to 4 do
  begin
    var Test := TTestList.Create;
-   defer(Test.Free);
+   defer(Test);
 
    Test.Add('1');
    Test.Add('2');
