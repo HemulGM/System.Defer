@@ -94,7 +94,7 @@ Errdefer
 function GetList: TTestList;
 begin
   var List := TTestList.Create;
-  errdefer(List.Free);
+  errdefer(List);
   List.DoRaise;
   Result := List;
 end;
