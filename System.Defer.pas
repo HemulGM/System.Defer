@@ -5,35 +5,55 @@ interface
 uses
   System.SysUtils;
 
+{$SCOPEDENUMS ON}
+
 type
   IDefer = interface
   end;
 
+  TDeferAction = (Always, OnError, NoError);
+
   TDefer = class(TInterfacedObject, IDefer)
-  private
+  protected
     FProc: TProc;
+    FObj: TObject;
+    FAction: TDeferAction;
+    function NeedDestroy: Boolean; virtual;
   public
-    constructor Create(Proc: TProc); reintroduce;
-    destructor Destroy; override;
-  end;
-
-  TDeferErr = class(TInterfacedObject, IDefer)
-  private
-    FProc: TProc;
-  public
-    constructor Create(Proc: TProc); reintroduce;
+    constructor Create(Proc: TProc; Action: TDeferAction = TDeferAction.Always); reintroduce; overload;
+    constructor Create(Obj: TObject; Action: TDeferAction = TDeferAction.Always); reintroduce; overload;
     destructor Destroy; override;
   end;
 
 /// <summary>
-/// defer is used to execute a statement while exiting the current block.
+/// Performs the procedure when leaving the block
 /// </summary>
-function defer(Proc: TProc): IDefer; inline;
+function defer(Proc: TProc): IDefer; inline; overload;
 
 /// <summary>
-/// errdefer works like defer, but only executing when the function is returned from with an error inside of the errdefer’s block.
+/// Performs the procedure when leaving the block due to exclusion
 /// </summary>
-function errdefer(Proc: TProc): IDefer; inline;
+function errdefer(Proc: TProc): IDefer; inline; overload;
+
+/// <summary>
+/// Performs the procedure when leaving the block if there was no exception
+/// </summary>
+function noerrdefer(Proc: TProc): IDefer; inline; overload;
+
+/// <summary>
+/// Releases the object when leaving the block
+/// </summary>
+function defer(Obj: TObject): IDefer; inline; overload;
+
+/// <summary>
+/// Releases the object when leaving the block due to exclusion
+/// </summary>
+function errdefer(Obj: TObject): IDefer; inline; overload;
+
+/// <summary>
+/// Releases the object when leaving the block if there was no exception
+/// </summary>
+function noerrdefer(Obj: TObject): IDefer; inline; overload;
 
 implementation
 
@@ -44,38 +64,70 @@ end;
 
 function errdefer(Proc: TProc): IDefer;
 begin
-  Result := TDeferErr.Create(Proc);
+  Result := TDefer.Create(Proc, TDeferAction.OnError);
+end;
+
+function noerrdefer(Proc: TProc): IDefer;
+begin
+  Result := TDefer.Create(Proc, TDeferAction.NoError);
+end;
+
+function defer(Obj: TObject): IDefer;
+begin
+  Result := TDefer.Create(Obj);
+end;
+
+function errdefer(Obj: TObject): IDefer;
+begin
+  Result := TDefer.Create(Obj, TDeferAction.OnError);
+end;
+
+function noerrdefer(Obj: TObject): IDefer;
+begin
+  Result := TDefer.Create(Obj, TDeferAction.NoError);
 end;
 
 { TDefer }
 
-constructor TDefer.Create(Proc: TProc);
+constructor TDefer.Create(Proc: TProc; Action: TDeferAction);
 begin
   inherited Create;
+  FAction := Action;
   FProc := Proc;
+  FObj := nil;
+end;
+
+constructor TDefer.Create(Obj: TObject; Action: TDeferAction);
+begin
+  inherited Create;
+  FAction := Action;
+  FProc := nil;
+  FObj := Obj;
 end;
 
 destructor TDefer.Destroy;
 begin
+  if not NeedDestroy then
+    Exit;
   if Assigned(FProc) then
     FProc();
+  FObj.Free;
   inherited;
 end;
 
-{ TDeferErr }
-
-constructor TDeferErr.Create(Proc: TProc);
+function TDefer.NeedDestroy: Boolean;
 begin
-  inherited Create;
-  FProc := Proc;
-end;
-
-destructor TDeferErr.Destroy;
-begin
-  if Assigned(ExceptObject()) then
-    if Assigned(FProc) then
-      FProc();
-  inherited;
+  case FAction of
+    TDeferAction.Always:
+      Exit(True);
+    TDeferAction.OnError:
+      Exit(Assigned(ExceptObject()));
+    TDeferAction.NoError:
+      Exit(not Assigned(ExceptObject()));
+  else
+    Result := True;
+  end;
 end;
 
 end.
+

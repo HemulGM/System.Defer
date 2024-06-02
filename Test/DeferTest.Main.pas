@@ -9,7 +9,7 @@ uses
 
 type
   TForm5 = class(TForm)
-    ButtonDefer: TButton;
+    Button1: TButton;
     Button2: TButton;
     Button3: TButton;
     Button5: TButton;
@@ -39,7 +39,7 @@ function GetList: TTestList;
 begin
   var List := TTestList.Create;
   errdefer(List.Free);
-  List.DoRaise;
+  List.DoRaise;                //test exception
   Result := List;
 end;
 
@@ -48,7 +48,7 @@ begin
   for var i := 1 to 4 do
   begin
     var Test := TTestList.Create;
-    defer(Test.Free);
+    defer(Test.Free);      //free all iter
 
     Test.Add('1');
     Test.Add('2');
@@ -78,7 +78,7 @@ begin
 
   with Canvas do
   begin
-    FillRect(TRectF.Empty, 1);
+    FillRect(TRectF.Create(10, 10, 50, 50), 1);
   end;
 end;
 
